@@ -1,6 +1,3 @@
-# Cloud Rider
-
-
 <p align="center">
-<img src="assets/cloud_rider_logo.png" alt="Logo" width="250"/>
+<img src="assets/cloud_rider_banner.png" alt="Logo"/>
 </p>
