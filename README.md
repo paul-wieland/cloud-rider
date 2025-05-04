@@ -13,10 +13,14 @@ Cloud Rider is a proof-of-concept (PoC) Ground Control Station (GCS) built with 
 
 It enables seamless streaming of telemetry and command data, making it ideal for UAV control, drone simulations, or robotic applications.
 
-## High Level Server Architecture
-<p align="center">
+## Cloud Rider Frontend
+
+<img src="assets/cloud_rider_ui.png" alt="Logo"/>
+
+## Cloud Rider Backend
+
 <img src="assets/high-level-server.drawio.png" alt="Logo"/>
-</p>
+
 
 
 ## Feature

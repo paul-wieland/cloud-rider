@@ -12,9 +12,15 @@ pub struct GlobalPosition {
     pub vz: i16,
 }
 
+#[derive(Serialize)]
+pub struct Message {
+    pub r#type: String,
+    pub data: GlobalPosition,
+}
+
 impl GlobalPosition {
-    pub fn from_global_position_int(data: GLOBAL_POSITION_INT_DATA) -> Self {
-        Self {
+    pub fn from_global_position_int(data: GLOBAL_POSITION_INT_DATA) -> Message {
+        let position = GlobalPosition {
             lat: data.lat as f64 / 1e7,
             lon: data.lon as f64 / 1e7,
             alt: data.alt as f64 / 1000.0,
@@ -22,6 +28,11 @@ impl GlobalPosition {
             vx: data.vx,
             vy: data.vy,
             vz: data.vz,
+        };
+
+        Message {
+            r#type: "telemetry".to_string(),
+            data: position,
         }
     }
 }

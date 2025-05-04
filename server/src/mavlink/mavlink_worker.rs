@@ -1,11 +1,13 @@
 use crate::messages::global_position::GlobalPosition;
 use crate::websocket::message_channel::MessageChannel;
 use axum::extract::ws::Message;
+use chrono::Utc;
 use mavlink::common::MavAutopilot::MAV_AUTOPILOT_INVALID;
 use mavlink::common::MavState::MAV_STATE_ACTIVE;
 use mavlink::common::MavType::MAV_TYPE_GCS;
 use mavlink::common::{MavMessage, MavModeFlag, HEARTBEAT_DATA};
 use mavlink::{connect, MavConnection, MavHeader};
+use serde_json::json;
 use std::sync::Arc;
 use std::thread;
 use tokio::sync::mpsc::Receiver;
@@ -78,8 +80,18 @@ impl MavlinkWorker {
     ) {
         match message {
             MavMessage::HEARTBEAT(_) => {
+                let timestamp = Utc::now().to_rfc3339();
+
+                let message = json!({
+                    "type": "heartbeat",
+                    "data": {
+                        "timestamp": timestamp
+                    }
+                });
+
+                let message_string = message.to_string();
                 telemetry_channel
-                    .send(Message::text(String::from("{type: \"heartbeat\"}")))
+                    .send(Message::text(String::from(message_string)))
                     .await;
             }
             MavMessage::SYS_STATUS(_) => {}
