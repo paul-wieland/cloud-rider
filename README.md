@@ -17,9 +17,7 @@ It enables seamless streaming of telemetry and command data, making it ideal for
 
 <img src="assets/cloud_rider_ui.png" alt="Logo"/>
 
-<video width="600" controls>
-  <source src="assets/cloud_rider_tracking_mode.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+<video src="assets/cloud_rider_tracking_mode.mp4" controls="controls" style="max-width: 730px;">
 </video>
 
 ## Cloud Rider Backend
