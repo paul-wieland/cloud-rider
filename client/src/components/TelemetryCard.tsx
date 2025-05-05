@@ -15,7 +15,7 @@ type TelemetryCardProps = {
 
 export const TelemetryCard: React.FC<TelemetryCardProps> = ({ telemetry, heartbeat }) => {
     return (
-        <Card className="bg-black/80 p-2 border-none backdrop-blur-sm">
+        <Card className="bg-[rgba(0,0,0,0.8)] text-white p-2 border-none backdrop-blur-sm">
             <CardContent className="text-left pt-1">
                     <div>
                         <h2 className="font-medium text-white mb-2">Global Position</h2>

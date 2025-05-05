@@ -138,16 +138,20 @@ function App() {
                         </Marker>
                     </MapContainer>
 
-                    <div className="absolute top-2 right-2 w-64 z-[1000] p-0 space-y-2">
-                        <TelemetryCard telemetry={telemetry} heartbeat={heartbeat} />
+                    <div className="absolute top-2 right-2 w-64 z-[1000] p-0">
+                        <div className="mb-2">
+                            <TelemetryCard telemetry={telemetry} heartbeat={heartbeat} />
+                        </div>
                         <Card className="bg-transparent p-0 border-none">
-                            <Button className="bg-black/80" onClick={toggleFollow}>
+                            <Button className="bg-[rgba(0,0,0,0.85)] text-white" onClick={toggleFollow}>
                                 {isFollowing ? "Stop Following" : "Follow Drone"}
                             </Button>
                         </Card>
                     </div>
                     <div className="absolute bottom-2 left-2 z-[1000] flex flex-row space-x-2">
-                        <StatsCard stats={stats}></StatsCard>
+                        <div className="mr-2">
+                            <StatsCard stats={stats}></StatsCard>
+                        </div>
                         <BatteryStatusCard battery={battery} />
                     </div>
                 </div>
