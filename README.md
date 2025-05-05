@@ -21,8 +21,9 @@ It enables telemetry data and command data streaming and is compatible with MAVL
 https://github.com/user-attachments/assets/f2351f7e-08dd-4cff-873b-0367d40aaf09
 
 ## Non Tracking Mode
+https://github.com/user-attachments/assets/a7654c3e-a6ec-47cb-a6c6-b3374b9fcd6e
 
-https://github.com/user-attachments/assets/3918a34f-a748-4da6-9bd0-3fd121d486dd
+
 
 
 
