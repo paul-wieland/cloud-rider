@@ -2,11 +2,6 @@ import './App.css'
 import { Button } from "@/components/ui/button"
 import {
     Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
 
 import { MapContainer } from 'react-leaflet/MapContainer'
@@ -16,7 +11,13 @@ import { Popup } from 'react-leaflet/Popup'
 import { useMap } from 'react-leaflet/hooks'
 
 import logo from "/cloud_rider_logo.png"
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import L from 'leaflet'
+import {TelemetryCard} from "@/components/TelemetryCard.tsx";
+import {BatteryStatusCard} from "@/components/BatteryStatusCard.tsx";
+import {BatteryStatus} from "@/model/BatteryStatus.ts";
+import {StatsCard} from "@/components/StatsCard.tsx";
+import {Stats} from "@/model/Stats.ts";
 
 type Telemetry = {
     lat: number;
@@ -34,19 +35,39 @@ type Heartbeat = {
 
 type Message =
     | { type: "telemetry"; data: Telemetry }
-    | { type: "heartbeat"; data: Heartbeat };
+    | { type: "heartbeat"; data: Heartbeat }
+    | { type: "battery"; data: BatteryStatus };
 
 function App() {
     const [telemetry, setTelemetry] = useState<Telemetry | null>(null);
-    const [heartbeat, setHeartbeat] = useState<string | null>(null);
+    const [heartbeat, setHeartbeat] = useState<Heartbeat | null>(null);
+    const [battery, setBattery] = useState<BatteryStatus | null>(null);
+    const [stats, setStats] = useState<Stats | null>({messageCount: 0, totalBytes: 0, elapsedSeconds: 0});
+    const [isFollowing, setIsFollowing] = useState<boolean>(true);
+
+    const toggleFollow = () => {
+        setIsFollowing((prev) => !prev);
+    };
 
     const customIcon = new L.Icon({
-        iconUrl: "/drone.png", // You can also import an image and use it
-        iconSize: [64, 64],             // width, height
-        iconAnchor: [16, 32],           // point of the icon which will correspond to marker's location
-        popupAnchor: [0, -32],          // point from which the popup should open relative to the iconAnchor
+        iconUrl: "/drone.png",
+        iconSize: [64, 64],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
     });
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStats((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    elapsedSeconds: prev.elapsedSeconds + 1,
+                };
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
 
     useEffect(() => {
@@ -56,13 +77,24 @@ function App() {
             try {
                 const message: Message = JSON.parse(event.data);
 
+                setStats((prev) => {
+                    if (!prev) return null;
+                    return {
+                        ...prev,
+                        messageCount: prev.messageCount + 1,
+                        totalBytes: prev.totalBytes + event.data.length,
+                    };
+                });
+
                 switch (message.type) {
                     case "telemetry":
-                        console.log(message.data);
                         setTelemetry(message.data);
                         break;
                     case "heartbeat":
-                        setHeartbeat(message.data.timestamp);
+                        setHeartbeat(message.data);
+                        break;
+                    case "battery":
+                        setBattery(message.data);
                         break;
                     default:
                         console.warn("Unknown message type:", message);
@@ -83,16 +115,15 @@ function App() {
 
     return (
         <div className="flex flex-col h-screen">
-            <header className="w-full bg-black shadow p-2 flex justify-center items-center">
-                <img src={logo} alt="Logo" className="h-25" />
+            <header className="w-full bg-black shadow flex justify-center items-center">
+                <img src={logo} alt="Logo" className="h-20" />
             </header>
 
-            <main className="relative">
-                <div className="w-full h-[500px] relative">
+                <div className="w-full h-full relative">
                     <MapContainer
                         center={[telemetry?.lat ?? 48, telemetry?.lon ?? 11]}
                         zoom={13}
-                        scrollWheelZoom={false}
+                        scrollWheelZoom={true}
                         className="h-full w-full"
                     >
                         <TileLayer
@@ -107,30 +138,19 @@ function App() {
                         </Marker>
                     </MapContainer>
 
-                    {/* Overlay Card */}
-                    <div className="absolute top-2 right-2 w-64 z-[1000] p-1">
-                        <Card className="bg-white p-2">
-                            {/*<CardHeader className="mb-0 pb-0">*/}
-                            {/*    <CardTitle>Global Position</CardTitle>*/}
-                            {/*</CardHeader>*/}
-                            <CardContent className="text-left pt-1">
-                                {telemetry ? (
-                                    <div>
-                                        <h2 className="font-medium">Global Position</h2>
-                                    <ul className="text-sm text-gray-800">
-                                        <li><span className="font-medium">Latitude:</span> {telemetry.lat.toFixed(6)}</li>
-                                        <li><span className="font-medium">Longitude:</span> {telemetry.lon.toFixed(6)}</li>
-                                        <li><span className="font-medium">Altitude:</span> {telemetry.alt.toFixed(2)} m</li>
-                                    </ul>
-                                    </div>
-                                ) : (
-                                    <p className="text-gray-500">Waiting for telemetry...</p>
-                                )}
-                            </CardContent>
+                    <div className="absolute top-2 right-2 w-64 z-[1000] p-0 space-y-2">
+                        <TelemetryCard telemetry={telemetry} heartbeat={heartbeat} />
+                        <Card className="bg-transparent p-0 border-none">
+                            <Button className="bg-black/80" onClick={toggleFollow}>
+                                {isFollowing ? "Stop Following" : "Follow Drone"}
+                            </Button>
                         </Card>
                     </div>
+                    <div className="absolute bottom-2 left-2 z-[1000] flex flex-row space-x-2">
+                        <StatsCard stats={stats}></StatsCard>
+                        <BatteryStatusCard battery={battery} />
+                    </div>
                 </div>
-            </main>
         </div>
     );
 
@@ -138,10 +158,10 @@ function App() {
         const map = useMap();
 
         useEffect(() => {
-            if (telemetry) {
+            if (telemetry && isFollowing) {
                 map.setView([telemetry.lat, telemetry.lon]);
             }
-        }, [telemetry, map]);
+        }, [telemetry, map, isFollowing]);
 
         return null;
     }
