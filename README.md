@@ -17,6 +17,10 @@ It enables telemetry data and command data streaming and is compatible with MAVL
 
 <img src="assets/cloud_rider_ui.png" alt="Logo"/>
 
+
+https://github.com/user-attachments/assets/f2351f7e-08dd-4cff-873b-0367d40aaf09
+
+
 ## Cloud Rider Backend
 
 <img src="assets/high-level-server.drawio.png" alt="Logo"/>
