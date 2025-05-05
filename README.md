@@ -11,7 +11,7 @@ Cloud Rider is a proof-of-concept (PoC) Ground Control Station (GCS) built with 
 - 🔄 WebSocket-based real-time communication between frontend and backend
 
 
-It enables seamless streaming of telemetry and command data, making it ideal for UAV control, drone simulations, or robotic applications.
+It enables telemetry data and command data streaming and is compatible with MAVLink.
 
 ## Cloud Rider Frontend
 
@@ -23,12 +23,22 @@ It enables seamless streaming of telemetry and command data, making it ideal for
 
 
 
-## Feature
+## ✅ 1. Telemetry Data Reception
+- [x] Simple WebSocket server written in Rust to provide telemetry data from PX4 using MAVLink protocol
 
-- [x] Simple Websocket Server written in Rust which provides telemetry data from PX4 using Mavlink protocol
-- [ ] Simple React frontend consuming telemetry data and display them
-- [ ] Enable sending commands from Frontend
-- [ ] Advanced session management (Graceful shutdown)
-- [ ] User authentication (advanced session management)
-- [ ] Display drone position in a map
-- [ ] Advanced mission planning capabilities
+## ✅ 2. Real-Time Display & Situational Awareness
+- [x] Simple React frontend to consume and display telemetry data
+- [x] Display drone position on a map
+
+## 🛠️ 3. Command and Control
+- [ ] Enable sending commands from the frontend
+
+## 🛠️ 4. Mission Planning
+- [ ] Advanced mission planning capabilities (e.g., creating and uploading flight paths)
+
+## 🛠️ 5. Data Logging
+- [ ] (Optional) Implement backend logging for telemetry and control data
+
+## 🛠️ 6. Session and User Management
+- [ ] Advanced session management (graceful shutdown)
+- [ ] User authentication and session handling
