@@ -17,8 +17,6 @@ It enables seamless streaming of telemetry and command data, making it ideal for
 
 <img src="assets/cloud_rider_ui.png" alt="Logo"/>
 
-[🎥 Watch demo video](assets/cloud_rider_tracking_mode.mp4)
-
 ## Cloud Rider Backend
 
 <img src="assets/high-level-server.drawio.png" alt="Logo"/>
