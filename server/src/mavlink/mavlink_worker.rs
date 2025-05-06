@@ -1,11 +1,13 @@
-use crate::messages::global_position::GlobalPosition;
+use crate::messages::global_position::{from_battery_status, from_global_position_int, GlobalPosition};
 use crate::websocket::message_channel::MessageChannel;
 use axum::extract::ws::Message;
+use chrono::Utc;
 use mavlink::common::MavAutopilot::MAV_AUTOPILOT_INVALID;
 use mavlink::common::MavState::MAV_STATE_ACTIVE;
 use mavlink::common::MavType::MAV_TYPE_GCS;
 use mavlink::common::{MavMessage, MavModeFlag, HEARTBEAT_DATA};
 use mavlink::{connect, MavConnection, MavHeader};
+use serde_json::json;
 use std::sync::Arc;
 use std::thread;
 use tokio::sync::mpsc::Receiver;
@@ -78,8 +80,18 @@ impl MavlinkWorker {
     ) {
         match message {
             MavMessage::HEARTBEAT(_) => {
+                let timestamp = Utc::now().to_rfc3339();
+
+                let message = json!({
+                    "type": "heartbeat",
+                    "data": {
+                        "timestamp": timestamp
+                    }
+                });
+
+                let message_string = message.to_string();
                 telemetry_channel
-                    .send(Message::text(String::from("{type: \"heartbeat\"}")))
+                    .send(Message::text(String::from(message_string)))
                     .await;
             }
             MavMessage::SYS_STATUS(_) => {}
@@ -104,7 +116,7 @@ impl MavlinkWorker {
             MavMessage::ATTITUDE_QUATERNION(_) => {}
             MavMessage::LOCAL_POSITION_NED(_) => {}
             MavMessage::GLOBAL_POSITION_INT(mavlink_data) => {
-                let global_position_data = GlobalPosition::from_global_position_int(mavlink_data);
+                let global_position_data = from_global_position_int(mavlink_data);
                 let json = serde_json::to_string(&global_position_data).unwrap();
                 telemetry_channel.send(Message::text(json)).await;
             }
@@ -202,7 +214,11 @@ impl MavlinkWorker {
             MavMessage::SCALED_PRESSURE3(_) => {}
             MavMessage::FOLLOW_TARGET(_) => {}
             MavMessage::CONTROL_SYSTEM_STATE(_) => {}
-            MavMessage::BATTERY_STATUS(_) => {}
+            MavMessage::BATTERY_STATUS(mav_battery_status) => {
+                let battery_status = from_battery_status(mav_battery_status);
+                let json = serde_json::to_string(&battery_status).unwrap();
+                telemetry_channel.send(Message::text(json)).await;
+            }
             MavMessage::AUTOPILOT_VERSION(_) => {}
             MavMessage::LANDING_TARGET(_) => {}
             MavMessage::FENCE_STATUS(_) => {}
