@@ -1,2 +1,2 @@
-mod mavlink_message_handler;
+mod mavlink_message_mapper;
 pub mod mavlink_worker;
