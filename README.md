@@ -28,7 +28,7 @@ https://github.com/user-attachments/assets/a7654c3e-a6ec-47cb-a6c6-b3374b9fcd6e
 
 
 
-## Cloud Rider Backend
+## Cloud Rider Architecture
 
 <img src="assets/high-level-server.drawio.png" alt="Logo"/>
 
