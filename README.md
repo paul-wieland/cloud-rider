@@ -54,3 +54,37 @@ https://github.com/user-attachments/assets/a7654c3e-a6ec-47cb-a6c6-b3374b9fcd6e
 ### 🛠️ 6. Session and User Management
 - [ ] Advanced session management (graceful shutdown)
 - [ ] User authentication and session handling
+
+
+# 🚀 How to Run This Project
+
+> ⚠️ **Disclaimer**: This project has only been tested on **Ubuntu Linux**.
+
+---
+
+## 1. Install PX4 Autopilot
+
+Before running the GCS, you need to install the PX4 development environment.
+
+Follow the official PX4 setup guide for **Ubuntu**:
+
+🔗 [PX4 Development Environment – Ubuntu Setup](https://docs.px4.io/main/en/dev_setup/dev_env_linux_ubuntu.html)
+
+Ensure that you can successfully launch the PX4 SITL simulation before continuing.
+
+---
+
+## 2. Run the Server
+
+```bash
+    cd server
+    cargo run
+```
+
+## 3. Run the Client
+
+```bash
+    cd client
+    npm install
+    npm run dev
+```
