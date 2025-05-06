@@ -18,28 +18,20 @@ import {BatteryStatusCard} from "@/components/BatteryStatusCard.tsx";
 import {BatteryStatus} from "@/model/BatteryStatus.ts";
 import {StatsCard} from "@/components/StatsCard.tsx";
 import {Stats} from "@/model/Stats.ts";
+import {GlobalPosition} from "@/model/GlobalPosition.ts";
 
-type Telemetry = {
-    lat: number;
-    lon: number;
-    alt: number;
-    relative_alt: number;
-    vx: number;
-    vy: number;
-    vz: number;
-};
 
 type Heartbeat = {
     timestamp: string;
 };
 
 type Message =
-    | { type: "telemetry"; data: Telemetry }
-    | { type: "heartbeat"; data: Heartbeat }
-    | { type: "battery"; data: BatteryStatus };
+    | { type: "GlobalPosition"; data: GlobalPosition }
+    | { type: "Heartbeat"; data: Heartbeat }
+    | { type: "BatteryStatus"; data: BatteryStatus };
 
 function App() {
-    const [telemetry, setTelemetry] = useState<Telemetry | null>(null);
+    const [globalPosition, setGlobalPosition] = useState<GlobalPosition | null>(null);
     const [heartbeat, setHeartbeat] = useState<Heartbeat | null>(null);
     const [battery, setBattery] = useState<BatteryStatus | null>(null);
     const [stats, setStats] = useState<Stats | null>({messageCount: 0, totalBytes: 0, elapsedSeconds: 0});
@@ -87,13 +79,13 @@ function App() {
                 });
 
                 switch (message.type) {
-                    case "telemetry":
-                        setTelemetry(message.data);
+                    case "GlobalPosition":
+                        setGlobalPosition(message.data);
                         break;
-                    case "heartbeat":
+                    case "Heartbeat":
                         setHeartbeat(message.data);
                         break;
-                    case "battery":
+                    case "BatteryStatus":
                         setBattery(message.data);
                         break;
                     default:
@@ -121,7 +113,7 @@ function App() {
 
                 <div className="w-full h-full relative">
                     <MapContainer
-                        center={[telemetry?.lat ?? 48, telemetry?.lon ?? 11]}
+                        center={[globalPosition?.lat ?? 48, globalPosition?.lon ?? 11]}
                         zoom={13}
                         scrollWheelZoom={true}
                         className="h-full w-full"
@@ -130,8 +122,8 @@ function App() {
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                        {telemetry && <MapUpdater telemetry={telemetry} />}
-                        <Marker position={[telemetry?.lat ?? 48, telemetry?.lon ?? 11]} icon={customIcon}>
+                        {globalPosition && <MapUpdater globalPosition={globalPosition} />}
+                        <Marker position={[globalPosition?.lat ?? 48, globalPosition?.lon ?? 11]} icon={customIcon}>
                             <Popup>
                                 A pretty CSS3 popup. <br /> Easily customizable.
                             </Popup>
@@ -140,7 +132,7 @@ function App() {
 
                     <div className="absolute top-2 right-2 w-64 z-[1000] p-0">
                         <div className="mb-2">
-                            <TelemetryCard telemetry={telemetry} heartbeat={heartbeat} />
+                            <TelemetryCard globalPosition={globalPosition} heartbeat={heartbeat} />
                         </div>
                         <Card className="bg-transparent p-0 border-none">
                             <Button className="bg-[rgba(0,0,0,0.85)] text-white" onClick={toggleFollow}>
@@ -158,14 +150,14 @@ function App() {
         </div>
     );
 
-    function MapUpdater({ telemetry }: { telemetry: Telemetry | null }) {
+    function MapUpdater({ globalPosition }: { globalPosition: GlobalPosition | null }) {
         const map = useMap();
 
         useEffect(() => {
-            if (telemetry && isFollowing) {
-                map.setView([telemetry.lat, telemetry.lon]);
+            if (globalPosition && isFollowing) {
+                map.setView([globalPosition.lat, globalPosition.lon]);
             }
-        }, [telemetry, map, isFollowing]);
+        }, [globalPosition, map, isFollowing]);
 
         return null;
     }

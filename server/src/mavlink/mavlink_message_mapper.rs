@@ -14,10 +14,10 @@ pub fn to_cloud_rider(message: &MavMessage) -> Option<CloudRiderMessage> {
         })),
         MavMessage::GLOBAL_POSITION_INT(mavlink_data) => {
             Some(CloudRiderMessage::GlobalPosition(GlobalPosition {
-                lat: mavlink_data.lat,
-                lon: mavlink_data.lon,
-                alt: mavlink_data.alt,
-                relative_alt: mavlink_data.relative_alt,
+                lat: mavlink_data.lat as f64 / 1e7,
+                lon: mavlink_data.lon as f64 / 1e7,
+                alt: mavlink_data.alt as f64 / 1000.0,
+                relative_alt: mavlink_data.relative_alt as f64 / 1000.0,
                 vx: mavlink_data.vx,
                 vy: mavlink_data.vy,
                 vz: mavlink_data.vz,
@@ -26,7 +26,7 @@ pub fn to_cloud_rider(message: &MavMessage) -> Option<CloudRiderMessage> {
         MavMessage::BATTERY_STATUS(mav_battery_status) => {
             Some(CloudRiderMessage::BatteryStatus(BatteryStatus {
                 remaining_percent: mav_battery_status.battery_remaining,
-                temperature_c: mav_battery_status.temperature,
+                temperature_c: mav_battery_status.temperature as f32 / 100.0,
                 current_battery_ma: mav_battery_status.current_battery,
             }))
         }
