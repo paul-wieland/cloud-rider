@@ -1,6 +1,6 @@
 mod connection_manager;
+mod domain;
 mod mavlink;
-mod messages;
 mod websocket;
 
 use crate::connection_manager::ConnectionManager;

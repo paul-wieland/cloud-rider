@@ -1,7 +1,8 @@
+use crate::domain::cloud_rider_message::{CloudRiderMessage, Heartbeat};
+use crate::domain::message_channel::MessageChannel;
 use crate::mavlink::mavlink_worker::MavlinkWorker;
-use crate::websocket::message_channel::MessageChannel;
 use crate::websocket::websocket_sender::WebsocketSender;
-use axum::extract::ws::{Message, WebSocket};
+use axum::extract::ws::WebSocket;
 use futures_util::StreamExt;
 use std::time::Duration;
 
@@ -14,12 +15,13 @@ pub struct ConnectionManager {
 
 impl ConnectionManager {
     pub fn new(socket: WebSocket) -> Self {
-        let (tx_socket, rx_socket) = socket.split();
+        let (tx_socket, _) = socket.split();
 
         let (tx_telemetry_channel, rx_telemetry_channel) =
-            tokio::sync::mpsc::channel::<Message>(100);
+            tokio::sync::mpsc::channel::<CloudRiderMessage>(100);
 
-        let (tx_command_channel, rx_command_channel) = tokio::sync::mpsc::channel::<Message>(100);
+        let (tx_command_channel, rx_command_channel) =
+            tokio::sync::mpsc::channel::<CloudRiderMessage>(100);
 
         let mavlink_worker = MavlinkWorker::new(
             MessageChannel::new(tx_telemetry_channel.clone()),
@@ -51,12 +53,13 @@ impl ConnectionManager {
         let heartbeat_producer = self.command_channel.clone();
         let heartbeat_producer_handle = tokio::spawn(async move {
             loop {
-                heartbeat_producer.send(Message::text("heartbeat")).await;
+                let heartbeat = CloudRiderMessage::Heartbeat(Heartbeat::new());
+                heartbeat_producer.send(heartbeat).await;
                 tokio::time::sleep(Duration::from_millis(2000)).await;
             }
         });
 
-        tokio::join!(
+        let _ = tokio::join!(
             socket_sender_handle,
             mavlink_worker_handle,
             heartbeat_producer_handle
