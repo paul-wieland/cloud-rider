@@ -13,7 +13,7 @@ Cloud Rider is a proof-of-concept (PoC) Ground Control Station (GCS) built with 
 
 It enables telemetry data and command data streaming and is compatible with MAVLink.
 
-## Cloud Rider Frontend
+## Frontend
 
 <img src="assets/cloud_rider_ui.png" alt="Logo"/>
 
@@ -28,7 +28,7 @@ https://github.com/user-attachments/assets/a7654c3e-a6ec-47cb-a6c6-b3374b9fcd6e
 
 
 
-## Cloud Rider Backend
+## Architecture
 
 <img src="assets/high-level-server.drawio.png" alt="Logo"/>
 
