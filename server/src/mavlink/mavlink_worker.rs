@@ -46,7 +46,8 @@ impl MavlinkWorker {
         mavlink_connection: Arc<Box<dyn MavConnection<MavMessage> + Sync + Send>>,
         telemetry_channel_sender: MessageChannel,
     ) -> JoinHandle<()> {
-        tokio::spawn(async move {
+        // Use blocking task as mavlink_connection.recv() is blocking
+        tokio::task::spawn_blocking(async move {
             loop {
                 match mavlink_connection.recv() {
                     Ok((_header, message)) => {
