@@ -7,7 +7,7 @@ use mavlink::common::MavState::MAV_STATE_ACTIVE;
 use mavlink::common::MavType::MAV_TYPE_GCS;
 use mavlink::common::{MavMessage, MavModeFlag, HEARTBEAT_DATA};
 
-pub fn to_cloud_rider(message: &MavMessage) -> Option<CloudRiderMessage> {
+pub fn to_cloud_rider_message(message: &MavMessage) -> Option<CloudRiderMessage> {
     match message {
         MavMessage::HEARTBEAT(_) => Some(CloudRiderMessage::Heartbeat(Heartbeat {
             timestamp: Utc::now().to_rfc3339(),

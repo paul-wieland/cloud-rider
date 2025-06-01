@@ -16,9 +16,6 @@ use std::net::SocketAddr;
 async fn main() {
     let app = Router::new().route("/ws", get(websocket_handler));
     let address = SocketAddr::from(([127, 0, 0, 1], 3000));
-
-    println!("Listening on {}", address);
-
     axum::serve(tokio::net::TcpListener::bind(address).await.unwrap(), app)
         .await
         .unwrap();

@@ -1,6 +1,6 @@
 use crate::domain::cloud_rider_message::CloudRiderMessage;
 use crate::domain::message_channel::MessageChannel;
-use crate::mavlink::mavlink_message_mapper::{to_cloud_rider, to_mavlink};
+use crate::mavlink::mavlink_message_mapper::{to_cloud_rider_message, to_mavlink};
 use mavlink::common::MavMessage;
 use mavlink::{connect, MavConnection, MavHeader};
 use std::sync::Arc;
@@ -51,7 +51,7 @@ impl MavlinkWorker {
             loop {
                 match mavlink_connection.recv() {
                     Ok((_header, message)) => {
-                        if let Some(mapped_message) = to_cloud_rider(&message) {
+                        if let Some(mapped_message) = to_cloud_rider_message(&message) {
                             telemetry_channel_sender.send(mapped_message).await
                         }
                     }
